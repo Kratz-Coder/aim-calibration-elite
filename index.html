@@ -423,10 +423,6 @@ function startCalibration(){
 
 function showPhaseBriefing(){
 
-  if(currentPhaseIndex >= phases.length){
-    return;
-  }
-
   const phase = phases[currentPhaseIndex];
 
   document.getElementById("phaseBriefing").style.display = "block";
@@ -644,6 +640,56 @@ document.addEventListener("mousemove", e=>{
     );
 
   }
+
+});
+
+canvas.addEventListener("click", ()=>{
+
+  if(!config) return;
+
+  let dx = aim.x - target.x;
+  let dy = aim.y - target.y;
+
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist < config.hitbox){
+
+    stats.hits++;
+
+    totalReactionTime +=
+      performance.now() - spawnTime;
+
+    spawn();
+
+  } else {
+
+    stats.misses++;
+
+    totalDistance += dist;
+
+  }
+
+  let totalShots =
+    stats.hits + stats.misses;
+
+  let accuracy =
+    totalShots > 0
+    ? ((stats.hits / totalShots) * 100).toFixed(0)
+    : 0;
+
+  let avgReaction =
+    stats.hits > 0
+    ? (totalReactionTime / stats.hits).toFixed(0)
+    : 0;
+
+  document.getElementById("accuracyStat").innerText =
+    accuracy + "%";
+
+  document.getElementById("hitsStat").innerText =
+    stats.hits;
+
+  document.getElementById("reactionStat").innerText =
+    avgReaction + "ms";
 
 });
 
