@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aim Calibration Elite</title>
+</head>
+
+<body style="
+margin:0;
+overflow:hidden;
+background:#0b0f14;
+font-family:Arial;
+color:white;
+">
+
+<!-- ================= MAIN UI ================= -->
+
+<div id="ui" style="
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:540px;
+max-width:92%;
+z-index:10;
+background:rgba(12,16,22,0.94);
+padding:32px;
+border-radius:22px;
+border:1px solid rgba(255,255,255,0.06);
+box-shadow:
+0 0 40px rgba(0,0,0,0.5),
+0 0 80px rgba(76,175,239,0.08);
+backdrop-filter:blur(12px);
+text-align:center;
+">
+
+  <h1 style="
+  margin:0;
+  font-size:42px;
+  font-weight:800;
+  ">
+    Aim Calibration Elite
+  </h1>
+
+  <div style="
+  margin-top:14px;
+  font-size:22px;
+  line-height:1.4;
+  font-weight:600;
+  color:#4cafef;
+  ">
+    Your aim changes every day.<br>
+    Your sensitivity should too.
+  </div>
+
+  <p style="
+  margin-top:20px;
+  color:#9fb0c3;
+  font-size:15px;
+  line-height:1.7;
+  max-width:420px;
+  margin-left:auto;
+  margin-right:auto;
+  ">
+    Daily adaptive sensitivity calibration for competitive FPS players.
+  </p>
+
+  <select id="gameSelect" style="
+  width:100%;
+  padding:16px;
+  margin-bottom:14px;
+  border-radius:14px;
+  border:none;
+  background:#131b24;
+  color:white;
+  font-size:15px;
+  ">
+    <option value="cs2">Counter-Strike 2</option>
+    <option value="valorant">Valorant</option>
+    <option value="apex">Apex Legends</option>
+    <option value="cod">Call of Duty</option>
+    <option value="fortnite">Fortnite</option>
+  </select>
+
+  <input
+    id="dpiInput"
+    type="number"
+    placeholder="Mouse DPI"
+    value="800"
+    style="
+    width:100%;
+    padding:16px;
+    margin-bottom:14px;
+    border-radius:14px;
+    border:none;
+    background:#131b24;
+    color:white;
+    font-size:15px;
+    box-sizing:border-box;
+    "
+  >
+
+  <input
+    id="sensInput"
+    type="number"
+    step="0.01"
+    placeholder="In-Game Sensitivity"
+    value="1.5"
+    style="
+    width:100%;
+    padding:16px;
+    margin-bottom:22px;
+    border-radius:14px;
+    border:none;
+    background:#131b24;
+    color:white;
+    font-size:15px;
+    box-sizing:border-box;
+    "
+  >
+
+  <button
+    onclick="startCalibration()"
+    style="
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:16px;
+    background:#4cafef;
+    color:white;
+    font-size:17px;
+    font-weight:700;
+    cursor:pointer;
+    "
+  >
+    Start Daily Calibration
+  </button>
+
+</div>
+
+<!-- ================= PHASE BRIEFING ================= -->
+
+<div id="phaseBriefing" style="
+display:none;
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:500px;
+max-width:90%;
+background:rgba(12,16,22,0.96);
+padding:40px;
+border-radius:20px;
+text-align:center;
+z-index:20;
+">
+
+  <div id="briefingPhase" style="
+  color:#4cafef;
+  font-size:14px;
+  letter-spacing:2px;
+  margin-bottom:14px;
+  font-weight:bold;
+  ">
+  </div>
+
+  <h2 id="briefingTitle" style="
+  margin-top:0;
+  font-size:36px;
+  ">
+  </h2>
+
+  <p id="briefingDescription" style="
+  color:#9fb0c3;
+  line-height:1.8;
+  font-size:16px;
+  ">
+  </p>
+
+  <!-- POINTER LOCK INFO -->
+
+  <div style="
+  margin-top:24px;
+  padding:14px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  color:#9fb0c3;
+  font-size:13px;
+  line-height:1.6;
+  ">
+    Your cursor will lock during calibration for accurate aim tracking.
+    <br><br>
+    Press <b>ESC</b> anytime to unlock your mouse.
+  </div>
+
+  <button
+    onclick="beginPhase()"
+    style="
+    margin-top:24px;
+    padding:16px 28px;
+    border:none;
+    border-radius:14px;
+    background:#4cafef;
+    color:white;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+    "
+  >
+    Begin
+  </button>
+
+</div>
+
+<!-- ================= HUD ================= -->
+
+<div id="hud" style="
+display:none;
+position:absolute;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+width:420px;
+background:rgba(12,16,22,0.72);
+padding:18px;
+border-radius:18px;
+z-index:15;
+text-align:center;
+backdrop-filter:blur(10px);
+">
+
+  <div id="phaseText" style="
+  font-size:18px;
+  font-weight:bold;
+  ">
+  </div>
+
+  <div id="countdownText" style="
+  font-size:42px;
+  margin-top:10px;
+  font-weight:800;
+  color:#4cafef;
+  ">
+  </div>
+
+  <div style="
+  width:100%;
+  height:8px;
+  background:#18222d;
+  margin-top:18px;
+  border-radius:999px;
+  overflow:hidden;
+  ">
+
+    <div id="progressBar" style="
+    height:100%;
+    width:0%;
+    background:#4cafef;
+    transition:0.3s;
+    ">
+    </div>
+
+  </div>
+
+  <div id="liveStats" style="
+  margin-top:16px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:#9fb0c3;
+  gap:10px;
+  ">
+
+    <div>
+      Accuracy:
+      <span id="accuracyStat">0%</span>
+    </div>
+
+    <div>
+      Hits:
+      <span id="hitsStat">0</span>
+    </div>
+
+    <div>
+      Avg Time:
+      <span id="reactionStat">0ms</span>
+    </div>
+
+  </div>
+
+  <button
+    onclick="restartCalibration()"
+    style="
+    margin-top:16px;
+    padding:10px 18px;
+    border:none;
+    border-radius:10px;
+    background:#1d2733;
+    color:white;
+    cursor:pointer;
+    font-size:13px;
+    "
+  >
+    Restart Calibration
+  </button>
+
+  <!-- ESC MESSAGE -->
+
+  <div style="
+  margin-top:12px;
+  font-size:12px;
+  color:#7f8c9b;
+  line-height:1.5;
+  ">
+    Press <b>ESC</b> anytime to release your cursor
+  </div>
+
+</div>
+
+<!-- ================= RESULTS ================= -->
+
+<div id="results" style="
+display:none;
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#111821;
+padding:40px;
+border-radius:18px;
+width:620px;
+max-width:92%;
+z-index:20;
+text-align:left;
+">
+
+  <h2 style="text-align:center;">
+    Daily Aim Analysis
+  </h2>
+
+  <div id="confidenceText" style="
+  margin-top:20px;
+  text-align:center;
+  font-size:20px;
+  color:#4cafef;
+  font-weight:bold;
+  ">
+  </div>
+
+  <div id="analysisText" style="
+  margin-top:30px;
+  ">
+  </div>
+
+  <div style="
+  margin-top:30px;
+  padding-top:20px;
+  border-top:1px solid rgba(255,255,255,0.08);
+  text-align:center;
+  ">
+
+    <div style="
+    color:#9fb0c3;
+    margin-bottom:12px;
+    ">
+      Recommended Adjustment
+    </div>
+
+    <div id="adjustmentText" style="
+    font-size:34px;
+    color:#4cafef;
+    font-weight:bold;
+    ">
+    </div>
+
+    <div style="
+    margin-top:20px;
+    color:#9fb0c3;
+    ">
+      Suggested Sensitivity
+    </div>
+
+    <div id="newSensText" style="
+    margin-top:10px;
+    font-size:42px;
+    font-weight:bold;
+    color:white;
+    ">
+    </div>
+
+  </div>
+
+  <button onclick="location.reload()" style="
+  width:100%;
+  margin-top:30px;
+  padding:16px;
+  border:none;
+  border-radius:14px;
+  background:#4cafef;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  ">
+    Run Again
+  </button>
+
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const gameSettings = {
+
+  cs2: {
+    yaw: 0.022,
+    baseScale: 0.0008
+  },
+
+  valorant: {
+    yaw: 0.07,
+    baseScale: 0.00025
+  },
+
+  apex: {
+    yaw: 0.022,
+    baseScale: 0.0008
+  },
+
+  cod: {
+    yaw: 0.0066,
+    baseScale: 0.0025
+  },
+
+  fortnite: {
+    yaw: 0.555,
+    baseScale: 0.00003
+  }
+
+};
+
+let target = {x:0,y:0,vx:0,vy:0};
+let aim = {x:canvas.width/2,y:canvas.height/2};
+
+let phases = ["flick","tracking","micro"];
+let currentPhaseIndex = 0;
+
+let calibrationData = {};
+let config;
+
+let stats;
+let totalDistance;
+let totalReactionTime;
+let spawnTime;
+
+let sensMultiplier = 0.5;
+
+const phaseDurations = {
+  flick: 20000,
+  tracking: 25000,
+  micro: 15000
+};
+
+const hitSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+
+function getConfig(phase){
+
+  if(phase==="flick"){
+    return {speed:0,size:8,hitbox:10};
+  }
+
+  if(phase==="tracking"){
+    return {speed:1.8,size:12,hitbox:14};
+  }
+
+  if(phase==="micro"){
+    return {speed:0.7,size:5,hitbox:6};
+  }
+
+}
+
+function startCalibration(){
+
+  const game =
+    document.getElementById("gameSelect").value;
+
+  const dpi =
+    parseFloat(document.getElementById("dpiInput").value);
+
+  const sens =
+    parseFloat(document.getElementById("sensInput").value);
+
+  const settings = gameSettings[game];
+
+  const cm360 =
+    (2.54 * 360) /
+    (dpi * sens * settings.yaw);
+
+  sensMultiplier =
+    (1 / cm360) *
+    (settings.baseScale * 12000);
+
+  sensMultiplier =
+    Math.max(0.08, Math.min(8, sensMultiplier));
+
+  document.getElementById("ui").style.display = "none";
+
+  currentPhaseIndex = 0;
+  calibrationData = {};
+
+  showPhaseBriefing();
+}
+
+function showPhaseBriefing(){
+
+  if(currentPhaseIndex >= phases.length){
+    finalize();
+    return;
+  }
+
+  const phase = phases[currentPhaseIndex];
+
+  document.getElementById("phaseBriefing").style.display = "block";
+
+  if(phase === "flick"){
+
+    document.getElementById("briefingPhase").innerText = "PHASE 1";
+
+    document.getElementById("briefingTitle").innerText =
+      "Flick Precision";
+
+    document.getElementById("briefingDescription").innerHTML = `
+      Rapidly snap between static targets as quickly and accurately as possible.
+      <br><br>
+      Focus on:
+      <br>
+      • first-shot accuracy
+      <br>
+      • overshooting
+      <br>
+      • snap control
+    `;
+  }
+
+  if(phase === "tracking"){
+
+    document.getElementById("briefingPhase").innerText = "PHASE 2";
+
+    document.getElementById("briefingTitle").innerText =
+      "Tracking Control";
+
+    document.getElementById("briefingDescription").innerHTML = `
+      Track moving targets smoothly while maintaining precision.
+      <br><br>
+      Focus on:
+      <br>
+      • smoothness
+      <br>
+      • stability
+      <br>
+      • control
+    `;
+  }
+
+  if(phase === "micro"){
+
+    document.getElementById("briefingPhase").innerText = "PHASE 3";
+
+    document.getElementById("briefingTitle").innerText =
+      "Micro Adjustment";
+
+    document.getElementById("briefingDescription").innerHTML = `
+      Make small precise corrections on tiny targets.
+      <br><br>
+      Focus on:
+      <br>
+      • fine control
+      <br>
+      • steadiness
+      <br>
+      • precision
+    `;
+  }
+
+}
+
+function beginPhase(){
+
+  document.getElementById("phaseBriefing").style.display = "none";
+
+  document.getElementById("hud").style.display = "block";
+
+  nextPhase();
+}
+
+function nextPhase(){
+
+  if(currentPhaseIndex >= phases.length){
+    finalize();
+    return;
+  }
+
+  let phase = phases[currentPhaseIndex];
+
+  document.getElementById("phaseText").innerText =
+    phase.toUpperCase() +
+    " • " +
+    (phaseDurations[phase] / 1000) +
+    "s";
+
+  startCountdown(3, runPhase);
+}
+
+function startCountdown(seconds, callback){
+
+  let count = seconds;
+
+  let interval = setInterval(()=>{
+
+    document.getElementById("countdownText").innerText = count;
+
+    count--;
+
+    if(count < 0){
+
+      clearInterval(interval);
+
+      document.getElementById("countdownText").innerText = "";
+
+      callback();
+    }
+
+  },1000);
+}
+
+function runPhase(){
+
+  let phase = phases[currentPhaseIndex];
+
+  config = getConfig(phase);
+
+  stats = {
+    hits:0,
+    misses:0
+  };
+
+  totalDistance = 0;
+  totalReactionTime = 0;
+
+  document.getElementById("accuracyStat").innerText = "0%";
+  document.getElementById("hitsStat").innerText = "0";
+  document.getElementById("reactionStat").innerText = "0ms";
+
+  canvas.requestPointerLock();
+
+  spawn();
+
+  setTimeout(endPhase, phaseDurations[phase]);
+}
+
+function spawn(){
+
+  const topSafeZone = 180;
+
+  target.x = Math.random() * (canvas.width - 100) + 50;
+
+  target.y =
+    Math.random() * (canvas.height - topSafeZone - 100)
+    + topSafeZone;
+
+  target.vx = (Math.random()*2-1) * config.speed;
+  target.vy = (Math.random()*2-1) * config.speed;
+
+  spawnTime = performance.now();
+}
+
+function updateTarget(){
+
+  target.x += target.vx;
+  target.y += target.vy;
+
+  target.vx += (Math.random()-0.5) * 0.05;
+  target.vy += (Math.random()-0.5) * 0.05;
+
+  if(target.x < 40 || target.x > canvas.width-40){
+    target.vx *= -1;
+  }
+
+  if(target.y < 180 || target.y > canvas.height-40){
+    target.vy *= -1;
+  }
+
+}
+
+function draw(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  updateTarget();
+
+  ctx.strokeStyle = "rgba(255,255,255,0.03)";
+
+  for(let x=0;x<canvas.width;x+=80){
+
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,canvas.height);
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  ctx.arc(target.x,target.y,config ? config.size : 8,0,Math.PI*2);
+  ctx.strokeStyle = "rgba(255,0,0,0.5)";
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(target.x,target.y,(config ? config.size : 8)/2,0,Math.PI*2);
+  ctx.fillStyle = "red";
+  ctx.fill();
+
+  ctx.beginPath();
+
+  ctx.moveTo(aim.x-10,aim.y);
+  ctx.lineTo(aim.x+10,aim.y);
+
+  ctx.moveTo(aim.x,aim.y-10);
+  ctx.lineTo(aim.x,aim.y+10);
+
+  ctx.strokeStyle = "white";
+  ctx.stroke();
+
+  requestAnimationFrame(draw);
+}
+
+document.addEventListener("mousemove", e=>{
+
+  if(document.pointerLockElement === canvas){
+
+    aim.x += e.movementX * sensMultiplier;
+    aim.y += e.movementY * sensMultiplier;
+
+    aim.x = Math.max(0,Math.min(canvas.width,aim.x));
+    aim.y = Math.max(0,Math.min(canvas.height,aim.y));
+  }
+
+});
+
+canvas.addEventListener("click", ()=>{
+
+  if(!config) return;
+
+  let dx = aim.x-target.x;
+  let dy = aim.y-target.y;
+
+  let dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist < config.hitbox){
+
+    stats.hits++;
+
+    let reaction = performance.now() - spawnTime;
+
+    totalReactionTime += reaction;
+
+    hitSound.currentTime = 0;
+    hitSound.play();
+
+    spawn();
+
+  } else {
+
+    stats.misses++;
+    totalDistance += dist;
+  }
+
+  let totalShots = stats.hits + stats.misses;
+
+  let accuracy =
+    totalShots > 0
+    ? ((stats.hits / totalShots) * 100).toFixed(0)
+    : 0;
+
+  let avgReaction =
+    stats.hits > 0
+    ? (totalReactionTime / stats.hits).toFixed(0)
+    : 0;
+
+  document.getElementById("accuracyStat").innerText =
+    accuracy + "%";
+
+  document.getElementById("hitsStat").innerText =
+    stats.hits;
+
+  document.getElementById("reactionStat").innerText =
+    avgReaction + "ms";
+
+});
+
+function restartCalibration(){
+
+  document.exitPointerLock();
+
+  location.reload();
+}
+
+function endPhase(){
+
+  document.exitPointerLock();
+
+  let phase = phases[currentPhaseIndex];
+
+  calibrationData[phase] = {
+
+    avgDist: totalDistance / (stats.misses || 1),
+
+    avgTime: stats.hits
+      ? totalReactionTime / stats.hits
+      : 0
+  };
+
+  currentPhaseIndex++;
+
+  document.getElementById("progressBar").style.width =
+    ((currentPhaseIndex / phases.length) * 100) + "%";
+
+  if(currentPhaseIndex < phases.length){
+
+    setTimeout(showPhaseBriefing, 1000);
+
+  } else {
+
+    finalize();
+  }
+
+}
+
+function finalize(){
+
+  document.getElementById("hud").style.display = "none";
+
+  const sens =
+    parseFloat(document.getElementById("sensInput").value);
+
+  const game =
+    document.getElementById("gameSelect").value;
+
+  let flick = calibrationData.flick.avgDist;
+  let tracking = calibrationData.tracking.avgDist;
+  let micro = calibrationData.micro.avgDist;
+
+  let adjustment = (
+    flick/50 +
+    tracking/80 +
+    micro/120
+  ) / 3;
+
+  adjustment = Math.max(-5, Math.min(5, adjustment));
+
+  let newSens = sens * (1 + adjustment / 100);
+
+  let roundedSens;
+
+  if(game === "cs2" || game === "valorant"){
+
+    roundedSens = newSens.toFixed(2);
+
+  } else {
+
+    roundedSens = newSens.toFixed(1);
+
+  }
+
+  let confidence = "High Confidence Recommendation";
+
+  if(Math.abs(adjustment) < 1.5){
+    confidence = "No Major Adjustment Recommended";
+  }
+
+  document.getElementById("confidenceText").innerText =
+    confidence;
+
+  document.getElementById("analysisText").innerHTML = `
+
+    <div style="margin-bottom:24px;">
+
+      <div style="
+      color:#4cafef;
+      font-weight:bold;
+      margin-bottom:8px;
+      ">
+        Flick Precision
+      </div>
+
+      <div style="color:#d6dce5;">
+        ${
+          flick > 140
+          ? "Frequent overshooting detected."
+          : "Strong snap precision detected."
+        }
+      </div>
+
+    </div>
+
+    <div style="margin-bottom:24px;">
+
+      <div style="
+      color:#4cafef;
+      font-weight:bold;
+      margin-bottom:8px;
+      ">
+        Tracking Control
+      </div>
+
+      <div style="color:#d6dce5;">
+        ${
+          tracking > 120
+          ? "Tracking instability detected."
+          : "Stable tracking performance."
+        }
+      </div>
+
+    </div>
+
+    <div style="margin-bottom:24px;">
+
+      <div style="
+      color:#4cafef;
+      font-weight:bold;
+      margin-bottom:8px;
+      ">
+        Micro Adjustment
+      </div>
+
+      <div style="color:#d6dce5;">
+        ${
+          micro > 90
+          ? "Minor instability during fine corrections."
+          : "Excellent fine precision."
+        }
+      </div>
+
+    </div>
+
+  `;
+
+  document.getElementById("adjustmentText").innerText =
+    adjustment.toFixed(2) + "%";
+
+  document.getElementById("newSensText").innerText =
+    roundedSens;
+
+  document.getElementById("results").style.display = "block";
+}
+
+draw();
+
+</script>
+
+</body>
+</html>
