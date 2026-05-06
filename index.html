@@ -135,6 +135,139 @@ text-align:center;
 
 </div>
 
+<div id="resultsScreen" style="
+display:none;
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:560px;
+max-width:92%;
+z-index:30;
+background:rgba(12,16,22,0.96);
+padding:40px;
+border-radius:24px;
+text-align:center;
+box-shadow:
+0 0 40px rgba(0,0,0,0.6),
+0 0 80px rgba(76,175,239,0.08);
+">
+
+  <div style="
+  color:#4cafef;
+  font-size:14px;
+  letter-spacing:2px;
+  font-weight:bold;
+  ">
+    DAILY CALIBRATION COMPLETE
+  </div>
+
+  <h2 style="
+  font-size:42px;
+  margin-top:14px;
+  margin-bottom:10px;
+  ">
+    Recommended Sensitivity
+  </h2>
+
+  <div id="recommendedSens" style="
+  font-size:64px;
+  font-weight:800;
+  color:#4cafef;
+  margin-top:10px;
+  ">
+  </div>
+
+  <div id="sensChange" style="
+  margin-top:12px;
+  font-size:18px;
+  color:#9fb0c3;
+  ">
+  </div>
+
+  <div style="
+  margin-top:34px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  ">
+
+    <div style="
+    background:#131b24;
+    padding:20px;
+    border-radius:18px;
+    ">
+      <div style="color:#4cafef;font-size:13px;">
+        FLICK SCORE
+      </div>
+
+      <div id="flickScore" style="
+      margin-top:10px;
+      font-size:30px;
+      font-weight:bold;
+      ">
+      </div>
+    </div>
+
+    <div style="
+    background:#131b24;
+    padding:20px;
+    border-radius:18px;
+    ">
+      <div style="color:#4cafef;font-size:13px;">
+        TRACKING SCORE
+      </div>
+
+      <div id="trackingScore" style="
+      margin-top:10px;
+      font-size:30px;
+      font-weight:bold;
+      ">
+      </div>
+    </div>
+
+  </div>
+
+  <div style="
+  margin-top:18px;
+  background:#131b24;
+  padding:20px;
+  border-radius:18px;
+  ">
+
+    <div style="color:#4cafef;font-size:13px;">
+      MICRO ADJUSTMENT SCORE
+    </div>
+
+    <div id="microScore" style="
+    margin-top:10px;
+    font-size:30px;
+    font-weight:bold;
+    ">
+    </div>
+
+  </div>
+
+  <button
+    onclick="restartCalibration()"
+    style="
+    margin-top:30px;
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:16px;
+    background:#4cafef;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    "
+  >
+    Run Another Calibration
+  </button>
+
+</div>
+
 <div id="phaseBriefing" style="
 display:none;
 position:absolute;
@@ -150,58 +283,23 @@ text-align:center;
 z-index:20;
 ">
 
-  <div id="briefingPhase" style="
-  color:#4cafef;
-  font-size:14px;
-  letter-spacing:2px;
-  margin-bottom:14px;
-  font-weight:bold;
-  ">
-  </div>
+<div id="briefingPhase"></div>
+<h2 id="briefingTitle"></h2>
+<p id="briefingDescription"></p>
 
-  <h2 id="briefingTitle" style="
-  margin-top:0;
-  font-size:36px;
-  ">
-  </h2>
-
-  <p id="briefingDescription" style="
-  color:#9fb0c3;
-  line-height:1.8;
-  font-size:16px;
-  ">
-  </p>
-
-  <div style="
-  margin-top:24px;
-  padding:14px;
-  border-radius:12px;
-  background:rgba(255,255,255,0.04);
-  color:#9fb0c3;
-  font-size:13px;
-  line-height:1.6;
-  ">
-    Your cursor will lock during calibration for accurate aim tracking.
-    <br><br>
-    Press <b>ESC</b> anytime to unlock your mouse.
-  </div>
-
-  <button
-    onclick="beginPhase()"
-    style="
-    margin-top:24px;
-    padding:16px 28px;
-    border:none;
-    border-radius:14px;
-    background:#4cafef;
-    color:white;
-    font-weight:bold;
-    font-size:16px;
-    cursor:pointer;
-    "
-  >
-    Begin
-  </button>
+<button onclick="beginPhase()" style="
+margin-top:24px;
+padding:16px 28px;
+border:none;
+border-radius:14px;
+background:#4cafef;
+color:white;
+font-weight:bold;
+font-size:16px;
+cursor:pointer;
+">
+Begin
+</button>
 
 </div>
 
@@ -220,89 +318,73 @@ text-align:center;
 backdrop-filter:blur(10px);
 ">
 
-  <div id="phaseText" style="
-  font-size:18px;
-  font-weight:bold;
-  ">
-  </div>
+<div id="phaseText"></div>
 
-  <div id="countdownText" style="
-  font-size:42px;
-  margin-top:10px;
-  font-weight:800;
-  color:#4cafef;
-  ">
-  </div>
+<div id="countdownText" style="
+font-size:42px;
+margin-top:10px;
+font-weight:800;
+color:#4cafef;
+"></div>
 
-  <div style="
-  width:100%;
-  height:8px;
-  background:#18222d;
-  margin-top:18px;
-  border-radius:999px;
-  overflow:hidden;
-  ">
+<div style="
+width:100%;
+height:8px;
+background:#18222d;
+margin-top:18px;
+border-radius:999px;
+overflow:hidden;
+">
 
-    <div id="progressBar" style="
-    height:100%;
-    width:0%;
-    background:#4cafef;
-    transition:0.3s;
-    ">
-    </div>
+<div id="progressBar" style="
+height:100%;
+width:0%;
+background:#4cafef;
+transition:0.3s;
+"></div>
 
-  </div>
+</div>
 
-  <div id="liveStats" style="
-  margin-top:16px;
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-  color:#9fb0c3;
-  gap:10px;
-  ">
+<div id="liveStats" style="
+margin-top:16px;
+display:flex;
+justify-content:space-between;
+font-size:13px;
+color:#9fb0c3;
+gap:10px;
+">
 
-    <div>
-      Accuracy:
-      <span id="accuracyStat">0%</span>
-    </div>
+<div>
+Accuracy:
+<span id="accuracyStat">0%</span>
+</div>
 
-    <div>
-      Hits:
-      <span id="hitsStat">0</span>
-    </div>
+<div>
+Hits:
+<span id="hitsStat">0</span>
+</div>
 
-    <div>
-      Avg Time:
-      <span id="reactionStat">0ms</span>
-    </div>
+<div>
+Avg Time:
+<span id="reactionStat">0ms</span>
+</div>
 
-  </div>
+</div>
 
-  <button
-    onclick="restartCalibration()"
-    style="
-    margin-top:16px;
-    padding:10px 18px;
-    border:none;
-    border-radius:10px;
-    background:#1d2733;
-    color:white;
-    cursor:pointer;
-    font-size:13px;
-    "
-  >
-    Restart Calibration
-  </button>
-
-  <div style="
-  margin-top:12px;
-  font-size:12px;
-  color:#7f8c9b;
-  line-height:1.5;
-  ">
-    Press <b>ESC</b> anytime to release your cursor
-  </div>
+<button
+onclick="restartCalibration()"
+style="
+margin-top:16px;
+padding:10px 18px;
+border:none;
+border-radius:10px;
+background:#1d2733;
+color:white;
+cursor:pointer;
+font-size:13px;
+">
+Restart Calibration
+</button>
 
 </div>
 
@@ -325,53 +407,102 @@ let aim = {
 
 let target = {x:0,y:0,vx:0,vy:0};
 
-const gameSettings = {
-
-  cs2: {
-    yaw: 0.022,
-    baseScale: 0.0008
-  },
-
-  valorant: {
-    yaw: 0.07,
-    baseScale: 0.00025
-  },
-
-  apex: {
-    yaw: 0.022,
-    baseScale: 0.0008
-  },
-
-  cod: {
-    yaw: 0.0066,
-    baseScale: 0.0025
-  },
-
-  fortnite: {
-    yaw: 0.555,
-    baseScale: 0.00003
-  }
-
-};
+let config;
+let stats;
+let spawnTime;
+let totalReactionTime = 0;
 
 let phases = ["flick","tracking","micro"];
 let currentPhaseIndex = 0;
 
-let calibrationData = {};
-let config;
-
-let stats;
-let totalDistance;
-let totalReactionTime;
-let spawnTime;
-
-let sensMultiplier = 0.5;
-
-const phaseDurations = {
-  flick: 20000,
-  tracking: 25000,
-  micro: 15000
+let phaseScores = {
+  flick:0,
+  tracking:0,
+  micro:0
 };
+
+let currentSens = 1.5;
+let sensMultiplier = 1;
+
+function startCalibration(){
+
+  currentSens =
+    parseFloat(
+      document.getElementById("sensInput").value
+    );
+
+  document.getElementById("ui").style.display = "none";
+
+  currentPhaseIndex = 0;
+
+  showPhaseBriefing();
+}
+
+function showPhaseBriefing(){
+
+  const phase = phases[currentPhaseIndex];
+
+  document.getElementById("phaseBriefing").style.display = "block";
+
+  document.getElementById("briefingPhase").innerText =
+    "PHASE " + (currentPhaseIndex + 1);
+
+  if(phase === "flick"){
+    document.getElementById("briefingTitle").innerText =
+      "Flick Precision";
+
+    document.getElementById("briefingDescription").innerHTML =
+      "Rapidly snap between static targets as quickly and accurately as possible.";
+  }
+
+  if(phase === "tracking"){
+    document.getElementById("briefingTitle").innerText =
+      "Tracking Control";
+
+    document.getElementById("briefingDescription").innerHTML =
+      "Track moving targets smoothly while maintaining precision.";
+  }
+
+  if(phase === "micro"){
+    document.getElementById("briefingTitle").innerText =
+      "Micro Adjustment";
+
+    document.getElementById("briefingDescription").innerHTML =
+      "Make small precise corrections on tiny targets.";
+  }
+
+}
+
+function beginPhase(){
+
+  document.getElementById("phaseBriefing").style.display = "none";
+  document.getElementById("hud").style.display = "block";
+
+  runPhase();
+}
+
+function runPhase(){
+
+  let phase = phases[currentPhaseIndex];
+
+  document.getElementById("phaseText").innerText =
+    phase.toUpperCase();
+
+  config = getConfig(phase);
+
+  stats = {
+    hits:0,
+    misses:0
+  };
+
+  totalReactionTime = 0;
+
+  spawn();
+
+  canvas.requestPointerLock();
+
+  setTimeout(endPhase,15000);
+}
 
 function getConfig(phase){
 
@@ -389,176 +520,12 @@ function getConfig(phase){
 
 }
 
-function startCalibration(){
-
-  const game =
-    document.getElementById("gameSelect").value;
-
-  const dpi =
-    parseFloat(document.getElementById("dpiInput").value);
-
-  const sens =
-    parseFloat(document.getElementById("sensInput").value);
-
-  const settings = gameSettings[game];
-
-  const cm360 =
-    (2.54 * 360) /
-    (dpi * sens * settings.yaw);
-
-  sensMultiplier =
-    (1 / cm360) *
-    (settings.baseScale * 12000);
-
-  sensMultiplier =
-    Math.max(0.08, Math.min(8, sensMultiplier));
-
-  document.getElementById("ui").style.display = "none";
-
-  currentPhaseIndex = 0;
-  calibrationData = {};
-
-  showPhaseBriefing();
-}
-
-function showPhaseBriefing(){
-
-  const phase = phases[currentPhaseIndex];
-
-  document.getElementById("phaseBriefing").style.display = "block";
-
-  if(phase === "flick"){
-
-    document.getElementById("briefingPhase").innerText = "PHASE 1";
-
-    document.getElementById("briefingTitle").innerText =
-      "Flick Precision";
-
-    document.getElementById("briefingDescription").innerHTML = `
-      Rapidly snap between static targets as quickly and accurately as possible.
-      <br><br>
-      Focus on:
-      <br>
-      • first-shot accuracy
-      <br>
-      • overshooting
-      <br>
-      • snap control
-    `;
-  }
-
-  if(phase === "tracking"){
-
-    document.getElementById("briefingPhase").innerText = "PHASE 2";
-
-    document.getElementById("briefingTitle").innerText =
-      "Tracking Control";
-
-    document.getElementById("briefingDescription").innerHTML = `
-      Track moving targets smoothly while maintaining precision.
-      <br><br>
-      Focus on:
-      <br>
-      • smoothness
-      <br>
-      • stability
-      <br>
-      • control
-    `;
-  }
-
-  if(phase === "micro"){
-
-    document.getElementById("briefingPhase").innerText = "PHASE 3";
-
-    document.getElementById("briefingTitle").innerText =
-      "Micro Adjustment";
-
-    document.getElementById("briefingDescription").innerHTML = `
-      Make small precise corrections on tiny targets.
-      <br><br>
-      Focus on:
-      <br>
-      • fine control
-      <br>
-      • steadiness
-      <br>
-      • precision
-    `;
-  }
-
-}
-
-function beginPhase(){
-
-  document.getElementById("phaseBriefing").style.display = "none";
-
-  document.getElementById("hud").style.display = "block";
-
-  nextPhase();
-}
-
-function nextPhase(){
-
-  let phase = phases[currentPhaseIndex];
-
-  document.getElementById("phaseText").innerText =
-    phase.toUpperCase() +
-    " • " +
-    (phaseDurations[phase] / 1000) +
-    "s";
-
-  startCountdown(3, runPhase);
-}
-
-function startCountdown(seconds, callback){
-
-  let count = seconds;
-
-  let interval = setInterval(()=>{
-
-    document.getElementById("countdownText").innerText = count;
-
-    count--;
-
-    if(count < 0){
-
-      clearInterval(interval);
-
-      document.getElementById("countdownText").innerText = "";
-
-      callback();
-    }
-
-  },1000);
-}
-
-function runPhase(){
-
-  let phase = phases[currentPhaseIndex];
-
-  config = getConfig(phase);
-
-  stats = {
-    hits:0,
-    misses:0
-  };
-
-  totalDistance = 0;
-  totalReactionTime = 0;
-
-  canvas.requestPointerLock();
-
-  spawn();
-
-  setTimeout(endPhase, phaseDurations[phase]);
-}
-
 function spawn(){
 
   const topSafeZone = HUD_HEIGHT + 40;
 
-  target.x = Math.random() * (canvas.width - 100) + 50;
+  target.x =
+    Math.random() * (canvas.width - 100) + 50;
 
   target.y =
     Math.random() * (canvas.height - topSafeZone - 100)
@@ -579,7 +546,7 @@ function updateTarget(){
     target.vx *= -1;
   }
 
-  if(target.y < HUD_HEIGHT + 40 || target.y > canvas.height - 40){
+  if(target.y < HUD_HEIGHT + 40 || target.y > canvas.height-40){
     target.vy *= -1;
   }
 
@@ -591,23 +558,8 @@ function draw(){
 
   updateTarget();
 
-  ctx.strokeStyle = "rgba(255,255,255,0.03)";
-
-  for(let x=0;x<canvas.width;x+=80){
-
-    ctx.beginPath();
-    ctx.moveTo(x,0);
-    ctx.lineTo(x,canvas.height);
-    ctx.stroke();
-  }
-
   ctx.beginPath();
   ctx.arc(target.x,target.y,config ? config.size : 8,0,Math.PI*2);
-  ctx.strokeStyle = "rgba(255,0,0,0.5)";
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(target.x,target.y,(config ? config.size : 8)/2,0,Math.PI*2);
   ctx.fillStyle = "red";
   ctx.fill();
 
@@ -665,8 +617,6 @@ canvas.addEventListener("click", ()=>{
 
     stats.misses++;
 
-    totalDistance += dist;
-
   }
 
   let totalShots =
@@ -693,16 +643,22 @@ canvas.addEventListener("click", ()=>{
 
 });
 
-function restartCalibration(){
-
-  document.exitPointerLock();
-
-  location.reload();
-}
-
 function endPhase(){
 
   document.exitPointerLock();
+
+  const phase = phases[currentPhaseIndex];
+
+  let totalShots =
+    stats.hits + stats.misses;
+
+  let accuracy =
+    totalShots > 0
+    ? (stats.hits / totalShots)
+    : 0;
+
+  phaseScores[phase] =
+    Math.round(accuracy * 100);
 
   currentPhaseIndex++;
 
@@ -711,10 +667,76 @@ function endPhase(){
 
   if(currentPhaseIndex < phases.length){
 
-    setTimeout(showPhaseBriefing, 1000);
+    setTimeout(showPhaseBriefing,1000);
+
+  } else {
+
+    showResults();
 
   }
 
+}
+
+function showResults(){
+
+  document.getElementById("hud").style.display = "none";
+
+  let avgScore =
+    (
+      phaseScores.flick +
+      phaseScores.tracking +
+      phaseScores.micro
+    ) / 3;
+
+  let adjustment = 0;
+
+  if(avgScore < 55){
+    adjustment = 0.06;
+  }
+  else if(avgScore < 75){
+    adjustment = 0.03;
+  }
+  else if(avgScore > 92){
+    adjustment = -0.02;
+  }
+
+  let recommended =
+    (currentSens * (1 + adjustment)).toFixed(2);
+
+  document.getElementById("recommendedSens").innerText =
+    recommended;
+
+  let direction =
+    adjustment > 0
+    ? "Increase"
+    : adjustment < 0
+    ? "Decrease"
+    : "Maintain";
+
+  document.getElementById("sensChange").innerText =
+    direction +
+    " from " +
+    currentSens.toFixed(2);
+
+  document.getElementById("flickScore").innerText =
+    phaseScores.flick + "%";
+
+  document.getElementById("trackingScore").innerText =
+    phaseScores.tracking + "%";
+
+  document.getElementById("microScore").innerText =
+    phaseScores.micro + "%";
+
+  document.getElementById("resultsScreen").style.display =
+    "block";
+
+}
+
+function restartCalibration(){
+
+  document.exitPointerLock();
+
+  location.reload();
 }
 
 draw();
